@@ -40,9 +40,41 @@ function doPost(e) {
         .setHeader("Access-Control-Allow-Origin", "*");
     }
 
-    const email = payload.email || "";
-    const zip = payload.zip || "";
-    const role = payload.role || "";
+    // Honeypot check
+    if (payload.hp_check) {
+      return ContentService.createTextOutput(JSON.stringify({ "status": "success" }))
+        .setMimeType(ContentService.MimeType.JSON)
+        .setHeader("Access-Control-Allow-Origin", "*");
+    }
+
+    // Server-side validations
+    const zipRegex = /^341(0[1-9]|1[0-9]|20|3[7-9]|4[0-3]|45|46)$/;
+    if (payload.zip && !zipRegex.test(payload.zip)) {
+      return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": "Invalid ZIP code format" }))
+        .setMimeType(ContentService.MimeType.JSON)
+        .setHeader("Access-Control-Allow-Origin", "*");
+    }
+
+    const validRoles = ["Hospitality / Service Worker", "Local Rideshare / Taxi Driver", "Concerned Taxpayer", "Family of Senior / Transit Dependent"];
+    if (payload.role && !validRoles.includes(payload.role)) {
+      return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": "Invalid role" }))
+        .setMimeType(ContentService.MimeType.JSON)
+        .setHeader("Access-Control-Allow-Origin", "*");
+    }
+
+    const sanitizeInput = (str) => {
+      if (!str) return "";
+      const stringified = String(str);
+      // Prevent formula/CSV injection
+      if (/^[=+\-@]/.test(stringified)) {
+        return "'" + stringified;
+      }
+      return stringified;
+    };
+
+    const email = sanitizeInput(payload.email || "");
+    const zip = sanitizeInput(payload.zip || "");
+    const role = sanitizeInput(payload.role || "");
     const timestamp = new Date();
 
     // Headers must match: Timestamp, Email, Zip Code, Persona/Role
