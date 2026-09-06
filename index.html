@@ -284,7 +284,7 @@
       <div id="confirmation-banner">
         <div class="success-msg">
           <strong>Thank you! Your information has been logged.</strong><br>
-          Your email client should have opened with a pre-written message.
+          Please review and send the message below to your commissioners.
         </div>
         
         <div class="email-preview">
@@ -294,8 +294,7 @@
         </div>
 
         <div class="fallback-actions">
-          <p style="color: var(--text-muted); font-size: 0.9rem;">If your device blocked the automatic pop-up:</p>
-          <button type="button" id="btn-open-mail" class="fallback-btn">Open Mail App Again</button>
+          <a id="btn-open-mail" class="fallback-btn" style="text-align: center; text-decoration: none; box-sizing: border-box; display: inline-block;">Open in Email Client</a>
           <button type="button" id="btn-copy-text" class="fallback-btn">Copy Message Text</button>
         </div>
       </div>
@@ -374,11 +373,9 @@
         headers: {
           'Content-Type': 'text/plain;charset=utf-8'
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
+        keepalive: true
       }).catch(err => console.error("Fetch error:", err)); // Don't block UI if fetch fails silently
-
-      // Immediately trigger mailto
-      window.location.href = mailtoUrl;
 
       // Update UI to show confirmation and fallback
       form.style.display = 'none';
@@ -387,10 +384,8 @@
       // Populate preview
       previewBodyText.textContent = previewBody;
 
-      // Fallback actions
-      btnOpenMail.onclick = () => {
-        window.location.href = mailtoUrl;
-      };
+      // Actions
+      btnOpenMail.href = mailtoUrl;
 
       btnCopyText.onclick = () => {
         navigator.clipboard.writeText(previewBody).then(() => {
