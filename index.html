@@ -199,7 +199,7 @@
       color: #e2e8f0;
       font-family: var(--font-family);
       line-height: 1.5;
-      white-space: pre-wrap;
+      white-space: pre-line;
       margin-top: 1rem;
       font-size: 0.95rem;
     }
@@ -317,8 +317,11 @@
     const emailRecipients = "Rick.LoCastro@collier.gov,Chris.Hall@collier.gov,Burt.Saunders@collier.gov,Dan.Kowal@collier.gov,Bill.McDaniel@collier.gov";
     const emailSubject = "Audit $12.55M WeDriveU Contract: Stop Transit Deficit";
     
-    function generateEmailBody(zip) {
-      // Use explicit \r\n for mailto encoding and template rendering
+    function generatePreviewBody(zip) {
+      return `Commissioners:\n\nCollier transit runs an $11.23M deficit while pouring $12.55M into WeDriveU—a vendor ranked dead-last (#4) in procurement. Taxpayers demand the County Auditor immediately conduct a performance audit and pilot a provider-agnostic rideshare voucher program (like Chicago/Pinellas) to stop the waste and back local drivers.\n\nRespectfully,\nA Collier County Taxpayer\nDistrict Zip Code: ${zip}`;
+    }
+
+    function generateMailtoBody(zip) {
       return `Commissioners:\r\n\r\nCollier transit runs an $11.23M deficit while pouring $12.55M into WeDriveU—a vendor ranked dead-last (#4) in procurement. Taxpayers demand the County Auditor immediately conduct a performance audit and pilot a provider-agnostic rideshare voucher program (like Chicago/Pinellas) to stop the waste and back local drivers.\r\n\r\nRespectfully,\r\nA Collier County Taxpayer\r\nDistrict Zip Code: ${zip}`;
     }
 
@@ -341,8 +344,9 @@
       };
 
       // Construct mailto URL
-      const emailBody = generateEmailBody(formData.zip);
-      const mailtoUrl = `mailto:${emailRecipients}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+      const previewBody = generatePreviewBody(formData.zip);
+      const mailtoBody = generateMailtoBody(formData.zip);
+      const mailtoUrl = `mailto:${emailRecipients}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(mailtoBody)}`;
 
       try {
         // Send async POST
@@ -368,7 +372,7 @@
       confirmationBanner.style.display = 'flex';
       
       // Populate preview
-      previewBodyText.textContent = emailBody;
+      previewBodyText.textContent = previewBody;
 
       // Fallback actions
       btnOpenMail.onclick = () => {
@@ -376,7 +380,7 @@
       };
 
       btnCopyText.onclick = () => {
-        navigator.clipboard.writeText(emailBody).then(() => {
+        navigator.clipboard.writeText(previewBody).then(() => {
           const originalText = btnCopyText.innerText;
           btnCopyText.innerText = "Copied!";
           setTimeout(() => { btnCopyText.innerText = originalText; }, 2000);
