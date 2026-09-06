@@ -41,7 +41,7 @@ function doPost(e) {
     }
 
     // Honeypot check
-    if (payload.hp_check) {
+    if (payload.website) {
       return ContentService.createTextOutput(JSON.stringify({ "status": "success" }))
         .setMimeType(ContentService.MimeType.JSON)
         .setHeader("Access-Control-Allow-Origin", "*");
@@ -49,15 +49,22 @@ function doPost(e) {
 
     // Server-side validations
     const zipRegex = /^341(0[1-9]|1[0-9]|20|3[7-9]|4[0-3]|45|46)$/;
-    if (payload.zip && !zipRegex.test(payload.zip)) {
-      return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": "Invalid ZIP code format" }))
+    if (!payload.zip || !zipRegex.test(payload.zip)) {
+      return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": "Invalid input" }))
+        .setMimeType(ContentService.MimeType.JSON)
+        .setHeader("Access-Control-Allow-Origin", "*");
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!payload.email || !emailRegex.test(payload.email)) {
+      return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": "Invalid input" }))
         .setMimeType(ContentService.MimeType.JSON)
         .setHeader("Access-Control-Allow-Origin", "*");
     }
 
     const validRoles = ["Hospitality / Service Worker", "Local Rideshare / Taxi Driver", "Concerned Taxpayer", "Family of Senior / Transit Dependent"];
-    if (payload.role && !validRoles.includes(payload.role)) {
-      return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": "Invalid role" }))
+    if (!payload.role || !validRoles.includes(payload.role)) {
+      return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": "Invalid input" }))
         .setMimeType(ContentService.MimeType.JSON)
         .setHeader("Access-Control-Allow-Origin", "*");
     }
@@ -75,7 +82,7 @@ function doPost(e) {
     const email = sanitizeInput(payload.email || "");
     const zip = sanitizeInput(payload.zip || "");
     const role = sanitizeInput(payload.role || "");
-    const timestamp = new Date();
+    const timestamp = new Date().toISOString();
 
     // Headers must match: Timestamp, Email, Zip Code, Persona/Role
     sheet.appendRow([timestamp, email, zip, role]);
