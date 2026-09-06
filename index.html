@@ -254,10 +254,7 @@
 
     <main class="form-card">
       <form id="action-form">
-        <div style="display: none;" aria-hidden="true">
-          <label for="hp_check">Do not fill this out</label>
-          <input type="text" id="hp_check" name="hp_check" tabindex="-1" autocomplete="off">
-        </div>
+        <input type="text" name="website" id="website" style="display:none !important;" tabindex="-1" autocomplete="off">
 
         <div class="form-group">
           <label for="email">Email Address</label>
@@ -337,16 +334,32 @@
         return;
       }
 
+      const emailVal = document.getElementById('email').value.trim();
+      const zipVal = document.getElementById('zip').value.trim();
+
+      const zipRegex = /^341(0[1-9]|1[0-9]|20|3[7-9]|4[0-3]|45|46)$/;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!zipRegex.test(zipVal)) {
+        alert("Please enter a valid Collier County zip code.");
+        return;
+      }
+
+      if (!emailRegex.test(emailVal)) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
       // Disable button and update text
       const originalBtnText = submitBtn.innerText;
       submitBtn.disabled = true;
       submitBtn.innerText = "Processing & Opening Email...";
 
       const formData = {
-        email: document.getElementById('email').value.trim(),
-        zip: document.getElementById('zip').value.trim(),
+        email: emailVal,
+        zip: zipVal,
         role: document.getElementById('role').value,
-        hp_check: document.getElementById('hp_check').value
+        website: document.getElementById('website').value
       };
 
       // Construct mailto URL
@@ -354,21 +367,15 @@
       const mailtoBody = generateMailtoBody(formData.zip);
       const mailtoUrl = `mailto:${emailRecipients}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(mailtoBody)}`;
 
-      try {
-        // Send async POST
-        if (APPS_SCRIPT_URL !== "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") {
-           fetch(APPS_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(formData)
-          }).catch(err => console.error("Fetch error:", err)); // Don't block UI if fetch fails silently
-        }
-      } catch (err) {
-        console.error("Network error:", err);
-      }
+      // Send async POST
+      fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      }).catch(err => console.error("Fetch error:", err)); // Don't block UI if fetch fails silently
 
       // Immediately trigger mailto
       window.location.href = mailtoUrl;
