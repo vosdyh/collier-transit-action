@@ -11,13 +11,9 @@
 
 const SHEET_NAME = "Sheet1";
 
-function doOptions(e) {
-  // Handle CORS preflight requests
-  return ContentService.createTextOutput("")
-    .setMimeType(ContentService.MimeType.TEXT)
-    .setHeader("Access-Control-Allow-Origin", "*")
-    .setHeader("Access-Control-Allow-Methods", "POST, OPTIONS")
-    .setHeader("Access-Control-Allow-Headers", "Content-Type");
+function doGet(e) {
+  return ContentService.createTextOutput("Collier Transit Action backend is active.")
+    .setMimeType(ContentService.MimeType.TEXT);
 }
 
 function doPost(e) {
@@ -30,14 +26,12 @@ function doPost(e) {
   }
 
   try {
-    let payload;
-    
-    if (e.postData && e.postData.contents) {
+    var payload = {};
+    try {
       payload = JSON.parse(e.postData.contents);
-    } else {
-      return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": "No payload found" }))
-        .setMimeType(ContentService.MimeType.JSON)
-        .setHeader("Access-Control-Allow-Origin", "*");
+    } catch (err) {
+      // fallback if payload is parsed via parameter
+      payload = e.parameter || {};
     }
 
     // Honeypot check
