@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Demand Collier County Transit Accountability</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --border-color: #334155;
+      --text-primary: #f8fafc;
+      --text-muted: #94a3b8;
+      --btn-bg: #ef4444;
+      --btn-hover: #dc2626;
+      --accent-color: #facc15;
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-primary);
+      font-family: var(--font-family);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: clamp(1rem, 5vw, 3rem);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 800px;
+      display: grid;
+      gap: 2rem;
+    }
+
+    header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    h1 {
+      font-size: clamp(1.75rem, 5vw, 3rem);
+      line-height: 1.2;
+      color: var(--text-primary);
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-callout {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-color);
+      padding: clamp(1rem, 4vw, 1.5rem);
+      border-radius: 0.5rem;
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .form-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      padding: clamp(1.5rem, 5vw, 2.5rem);
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+    }
+
+    form {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 0.5rem;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(250, 204, 21, 0.2);
+    }
+
+    input:invalid:focus, select:invalid:focus {
+      border-color: var(--btn-bg);
+      box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2);
+    }
+
+    button {
+      background-color: var(--btn-bg);
+      color: #fff;
+      border: none;
+      padding: 1rem 1.5rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: background-color 0.2s, transform 0.1s;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: var(--btn-hover);
+    }
+
+    button:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+
+    #confirmation-banner {
+      display: none;
+      background-color: rgba(34, 197, 94, 0.1);
+      border: 1px solid #22c55e;
+      color: #4ade80;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      text-align: center;
+      margin-top: 1.5rem;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .fallback-link {
+      display: inline-block;
+      background-color: transparent;
+      color: var(--text-primary);
+      text-decoration: underline;
+      text-decoration-color: var(--accent-color);
+      text-decoration-thickness: 2px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .fallback-link:hover {
+      color: var(--accent-color);
+    }
+
+    .disclaimer {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Demand Collier County Transit Accountability</h1>
+      <div class="stat-callout">
+        Collier Area Transit runs an $11.23M deficit, spending $51.52 per paratransit trip while awarding $12.55M to a last-place vendor.
+      </div>
+    </header>
+
+    <main class="form-card">
+      <form id="action-form">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required placeholder="your.email@example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="zip">Collier Zip Code</label>
+          <input type="text" id="zip" name="zip" pattern="[0-9]{5}" maxlength="5" required placeholder="34102">
+        </div>
+
+        <div class="form-group">
+          <label for="role">I am a...</label>
+          <select id="role" name="role" required>
+            <option value="" disabled selected>Select your primary role</option>
+            <option value="Hospitality / Service Worker">Hospitality / Service Worker</option>
+            <option value="Local Rideshare / Taxi Driver">Local Rideshare / Taxi Driver</option>
+            <option value="Concerned Taxpayer">Concerned Taxpayer</option>
+            <option value="Family of Senior / Transit Dependent">Family of Senior / Transit Dependent</option>
+          </select>
+        </div>
+
+        <button type="submit" id="submit-btn">Send Email to Commissioners</button>
+      </form>
+
+      <div id="confirmation-banner">
+        <div>
+          <strong>Thank you! Your information has been logged.</strong><br>
+          Your email client should have opened with a pre-written message.
+        </div>
+        <a id="fallback-mailto" class="fallback-link">Click here if your email client didn't open</a>
+      </div>
+    </main>
+
+    <footer class="disclaimer">
+      This is an independent taxpayer accountability campaign.
+    </footer>
+  </div>
+
+  <script>
+    const APPS_SCRIPT_URL = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE";
+
+    const form = document.getElementById('action-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const confirmationBanner = document.getElementById('confirmation-banner');
+    const fallbackMailto = document.getElementById('fallback-mailto');
+
+    const emailRecipients = "Rick.LoCastro@collier.gov,Chris.Hall@collier.gov,Burt.Saunders@collier.gov,Dan.Kowal@collier.gov,Bill.McDaniel@collier.gov";
+    const emailSubject = "Audit $12.55M WeDriveU Contract: Stop Transit Deficit";
+
+    function generateEmailBody(zip) {
+      return `Commissioners:
+Collier transit runs an $11.23M deficit while pouring $12.55M into WeDriveU—a vendor ranked dead-last (#4) in procurement. Taxpayers demand the County Auditor immediately conduct a performance audit and pilot a provider-agnostic rideshare voucher program (like Chicago/Pinellas) to stop the waste and back local drivers.
+
+Respectfully,
+A Collier Taxpayer [ZIP CODE: ${zip}]`;
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!form.checkValidity()) {
+        return;
+      }
+
+      // Disable button and update text
+      const originalBtnText = submitBtn.innerText;
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Processing & Opening Email...";
+
+      const formData = {
+        email: document.getElementById('email').value.trim(),
+        zip: document.getElementById('zip').value.trim(),
+        role: document.getElementById('role').value
+      };
+
+      // Construct mailto URL
+      const emailBody = generateEmailBody(formData.zip);
+      const mailtoUrl = `mailto:${emailRecipients}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+
+      try {
+        // Send async POST
+        if (APPS_SCRIPT_URL !== "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE") {
+           fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          }).catch(err => console.error("Fetch error:", err)); // Don't block UI if fetch fails silently
+        }
+      } catch (err) {
+        console.error("Network error:", err);
+      }
+
+      // Immediately trigger mailto
+      window.location.href = mailtoUrl;
+
+      // Update UI to show confirmation and fallback
+      form.style.display = 'none';
+      confirmationBanner.style.display = 'flex';
+      fallbackMailto.href = mailtoUrl;
+    });
+  </script>
+</body>
+</html>
