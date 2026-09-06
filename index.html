@@ -231,6 +231,20 @@
       color: #fff;
     }
 
+    .instruction-banner {
+      background-color: rgba(250, 204, 21, 0.1);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      color: #fef08a;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      font-size: 0.95rem;
+      text-align: left;
+    }
+
+    .instruction-banner strong {
+      color: var(--accent-color);
+    }
+
     .disclaimer {
       font-size: 0.85rem;
       color: var(--text-muted);
@@ -289,8 +303,12 @@
         
         <div class="email-preview">
           <div class="preview-meta"><strong>To:</strong> Board of County Commissioners</div>
-          <div class="preview-meta"><strong>Subject:</strong> Audit $12.55M WeDriveU Contract: Stop Transit Deficit</div>
+          <div class="preview-meta"><strong>Subject:</strong> <span id="preview-subject-text"></span></div>
           <div class="preview-body" id="preview-body-text"></div>
+        </div>
+
+        <div class="instruction-banner">
+          <strong>Tip:</strong> Add one personal sentence about your commute or neighborhood so your email bypasses county spam filters.
         </div>
 
         <div class="fallback-actions">
@@ -312,18 +330,33 @@
     const submitBtn = document.getElementById('submit-btn');
     const confirmationBanner = document.getElementById('confirmation-banner');
     const previewBodyText = document.getElementById('preview-body-text');
+    const previewSubjectText = document.getElementById('preview-subject-text');
     const btnOpenMail = document.getElementById('btn-open-mail');
     const btnCopyText = document.getElementById('btn-copy-text');
 
     const emailRecipients = "Rick.LoCastro@collier.gov,Chris.Hall@collier.gov,Burt.Saunders@collier.gov,Dan.Kowal@collier.gov,Bill.McDaniel@collier.gov";
-    const emailSubject = "Audit $12.55M WeDriveU Contract: Stop Transit Deficit";
     
-    function generatePreviewBody(zip) {
-      return `Commissioners:\n\nCollier transit runs an $11.23M deficit while pouring $12.55M into WeDriveU—a vendor ranked dead-last (#4) in procurement. Taxpayers demand the County Auditor immediately conduct a performance audit and pilot a provider-agnostic rideshare voucher program (like Chicago/Pinellas) to stop the waste and back local drivers.\n\nRespectfully,\nA Collier County Taxpayer\nDistrict Zip Code: ${zip}`;
+    const emailTemplates = [
+      {
+        subject: "Audit WeDriveU: Address Collier Transit's $11.23M Deficit",
+        body: "Commissioners:\n\nWith an $11.23M transit deficit, locking Collier into a $12.55M contract with WeDriveU—our 4th-ranked vendor—is reckless. Direct the County Auditor to perform an immediate contract audit and launch a provider-agnostic rideshare voucher pilot (Pinellas/Chicago model) to cut waste and support local drivers.\n\n[Add personal note or commute detail here]\n\nRespectfully,\n{{role}}\nCollier County, FL {{zip}}"
+      },
+      {
+        subject: "Fiduciary Check: $12.55M Contract & Transit Deficits",
+        body: "Commissioners:\n\nAwarding $12.55M to WeDriveU, the lowest-ranked (#4) bidder, compounds our county's staggering $11.23M transit deficit. I urge the Board to order an immediate audit of this contract and pilot an open rideshare voucher system (modeled on Chicago/Pinellas) that saves tax dollars and keeps funds with local drivers.\n\n[Add personal note or commute detail here]\n\nRespectfully,\n{{role}}\nCollier County, FL {{zip}}"
+      },
+      {
+        subject: "Taxpayer Demand: Replace WeDriveU Waste with Vouchers",
+        body: "Commissioners:\n\nCollier’s $11.23M transit deficit cannot withstand a $12.55M deal for dead-last vendor WeDriveU (#4). Stop subsidizing empty routes. Direct the County Auditor to conduct a performance audit and implement a provider-agnostic voucher model (like Chicago/Pinellas) to empower local rideshare drivers and trim waste.\n\n[Add personal note or commute detail here]\n\nRespectfully,\n{{role}}\nCollier County, FL {{zip}}"
+      }
+    ];
+
+    function generatePreviewBody(templateBody, role, zip) {
+      return templateBody.replace('{{role}}', role).replace('{{zip}}', zip);
     }
 
-    function generateMailtoBody(zip) {
-      return `Commissioners:\r\n\r\nCollier transit runs an $11.23M deficit while pouring $12.55M into WeDriveU—a vendor ranked dead-last (#4) in procurement. Taxpayers demand the County Auditor immediately conduct a performance audit and pilot a provider-agnostic rideshare voucher program (like Chicago/Pinellas) to stop the waste and back local drivers.\r\n\r\nRespectfully,\r\nA Collier County Taxpayer\r\nDistrict Zip Code: ${zip}`;
+    function generateMailtoBody(templateBody, role, zip) {
+      return templateBody.replace('{{role}}', role).replace('{{zip}}', zip).replace(/\n/g, '\r\n');
     }
 
     form.addEventListener('submit', async (e) => {
@@ -361,10 +394,15 @@
         website: document.getElementById('website').value
       };
 
+      const roleText = formData.role.trim() || 'Collier Taxpayer';
+
+      // Select random template
+      const template = emailTemplates[Math.floor(Math.random() * emailTemplates.length)];
+
       // Construct mailto URL
-      const previewBody = generatePreviewBody(formData.zip);
-      const mailtoBody = generateMailtoBody(formData.zip);
-      const mailtoUrl = `mailto:${emailRecipients}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(mailtoBody)}`;
+      const previewBody = generatePreviewBody(template.body, roleText, formData.zip);
+      const mailtoBody = generateMailtoBody(template.body, roleText, formData.zip);
+      const mailtoUrl = `mailto:${emailRecipients}?subject=${encodeURIComponent(template.subject)}&body=${encodeURIComponent(mailtoBody)}`;
 
       // Send async POST
       fetch(APPS_SCRIPT_URL, {
@@ -382,13 +420,15 @@
       confirmationBanner.style.display = 'flex';
       
       // Populate preview
+      previewSubjectText.textContent = template.subject;
       previewBodyText.textContent = previewBody;
 
       // Actions
       btnOpenMail.href = mailtoUrl;
 
       btnCopyText.onclick = () => {
-        navigator.clipboard.writeText(previewBody).then(() => {
+        const copyText = `Subject: ${template.subject}\n\n${previewBody}`;
+        navigator.clipboard.writeText(copyText).then(() => {
           const originalText = btnCopyText.innerText;
           btnCopyText.innerText = "Copied!";
           setTimeout(() => { btnCopyText.innerText = originalText; }, 2000);
