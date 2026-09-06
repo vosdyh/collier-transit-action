@@ -22,7 +22,7 @@ function doOptions(e) {
 
 function doPost(e) {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
-
+  
   if (!sheet) {
     return ContentService.createTextOutput(JSON.stringify({ "status": "error", "message": "Sheet not found" }))
       .setMimeType(ContentService.MimeType.JSON)
@@ -31,7 +31,7 @@ function doPost(e) {
 
   try {
     let payload;
-
+    
     if (e.postData && e.postData.contents) {
       payload = JSON.parse(e.postData.contents);
     } else {
